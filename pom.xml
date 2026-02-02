@@ -2,10 +2,14 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.example.testproject</groupId>
-  <artifactId>testproject</artifactId>
+  
+  <artifactId>Ocean_View_Resort</artifactId>
+  
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
-  <name>testproject Maven Webapp</name>
+  
+  <name>Ocean View Resort Maven Webapp</name>
+  
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
@@ -16,6 +20,6 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>testproject</finalName>
+    <finalName>Ocean_View_Resort</finalName>
   </build>
 </project>
