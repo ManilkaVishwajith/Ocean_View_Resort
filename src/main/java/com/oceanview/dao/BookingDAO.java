@@ -2,11 +2,16 @@ package com.oceanview.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.oceanview.model.Booking;
 import com.oceanview.util.DBConnect;
 
 public class BookingDAO {
 
+    
     public boolean addBooking(Booking b) {
         boolean f = false;
         try {
@@ -29,5 +34,33 @@ public class BookingDAO {
             e.printStackTrace();
         }
         return f;
+    }
+
+   
+    public List<Booking> getBookingsByUserId(int userId) {
+        List<Booking> list = new ArrayList<>();
+        Booking b = null;
+        try {
+            Connection con = DBConnect.getConnection();
+            String sql = "SELECT * FROM bookings WHERE user_id=? ORDER BY id DESC";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, userId);
+            
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                b = new Booking();
+                b.setId(rs.getInt(1));
+                b.setUserId(rs.getInt(2));
+                b.setRoomId(rs.getInt(3));
+                b.setCheckIn(rs.getDate(4));
+                b.setCheckOut(rs.getDate(5));
+                b.setTotalPrice(rs.getDouble(6));
+                b.setStatus(rs.getString(7));
+                list.add(b);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 }

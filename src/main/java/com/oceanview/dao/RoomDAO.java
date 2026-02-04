@@ -18,13 +18,11 @@ public class RoomDAO {
 
         try {
             Connection con = DBConnect.getConnection();
-            
             String sql = "SELECT * FROM rooms";
             PreparedStatement ps = con.prepareStatement(sql);
 
             ResultSet rs = ps.executeQuery();
 
-            
             while (rs.next()) {
                 r = new Room();
                 r.setId(rs.getInt(1));
@@ -42,5 +40,30 @@ public class RoomDAO {
         }
 
         return list;
+    } 
+
+   
+    public Room getRoomById(int id) {
+        Room r = null;
+        try {
+            Connection con = DBConnect.getConnection();
+            String sql = "SELECT * FROM rooms WHERE id=?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                r = new Room();
+                r.setId(rs.getInt(1));
+                r.setRoomNumber(rs.getString(2));
+                r.setRoomType(rs.getString(3));
+                r.setPrice(rs.getDouble(4));
+                r.setStatus(rs.getString(5));
+                r.setImageUrl(rs.getString(6));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return r;
     }
 }
