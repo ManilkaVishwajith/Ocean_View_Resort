@@ -2,14 +2,14 @@
 <%@ page import="com.oceanview.dao.RoomDAO, com.oceanview.model.Room, com.oceanview.model.User, java.util.List" %>
 
 <%
-    // ලොග් වෙලාද බලනවා
+   
     User user = (User) session.getAttribute("userObj");
     if(user == null) {
         response.sendRedirect("login.jsp");
         return;
     }
 
-    // URL එකෙන් එන Room ID එක ගන්නවා (index.jsp එකෙන් එවන එක)
+    // URL  Room ID 
     String idStr = request.getParameter("id");
     int roomId = 0;
     Room selectedRoom = null;
