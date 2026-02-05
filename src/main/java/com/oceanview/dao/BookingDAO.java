@@ -11,7 +11,7 @@ import com.oceanview.util.DBConnect;
 
 public class BookingDAO {
 
-    // Booking එකක් ඇතුළත් කරන Method එක
+    
     public boolean addBooking(Booking b) {
         boolean f = false;
         try {
@@ -36,7 +36,7 @@ public class BookingDAO {
         return f;
     }
 
-    // User ID එකට අදාළ Bookings ගන්නා Method එක
+    // User ID Bookings  Method 
     public List<Booking> getBookingsByUserId(int userId) {
         List<Booking> list = new ArrayList<>();
         Booking b = null;

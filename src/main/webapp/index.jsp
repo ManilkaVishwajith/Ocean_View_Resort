@@ -4,7 +4,7 @@
 <%
     User user = (User) session.getAttribute("userObj");
     
-    // Database එකෙන් කාමර ටික ලබා ගැනීම
+    // Database connection to get rooms
     RoomDAO dao = new RoomDAO();
     List<Room> rooms = dao.getAllRooms();
 %>
@@ -56,6 +56,9 @@
     <div class="d-flex">
         <% if(user != null) { %>
             <span class="navbar-text text-white me-3">Hi, <%= user.getUsername() %>!</span>
+            
+            <a href="my-bookings.jsp" class="btn btn-warning btn-sm me-2">My Bookings 📅</a>
+            
             <% if("admin".equals(user.getRole())) { %>
                 <a href="admin-dashboard.jsp" class="btn btn-outline-info btn-sm me-2">Admin Panel</a>
             <% } %>
@@ -67,7 +70,6 @@
     </div>
   </div>
 </nav>
-
 <div class="hero-section">
     <h1 class="display-3 fw-bold">Welcome to Paradise</h1>
     <p class="lead">Experience luxury and comfort like never before.</p>
@@ -84,7 +86,8 @@
             <div class="col-md-4 mb-4">
                 <div class="card room-card h-100">
                     <img src="img/<%= r.getImageUrl() %>" class="card-img-top room-img" alt="<%= r.getRoomType() %>" 
-                         onerror="this.src='https://source.unsplash.com/400x300/?hotel,room'"> <div class="card-body d-flex flex-column">
+                         onerror="this.src='https://source.unsplash.com/400x300/?hotel,room'">
+                    <div class="card-body d-flex flex-column">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h5 class="card-title mb-0"><%= r.getRoomType() %></h5>
                             <span class="badge bg-success"><%= r.getStatus() %></span>
@@ -94,7 +97,7 @@
                         
                         <div class="mt-auto">
                             <% if(user != null) { %>
-                                <a href="#" class="btn btn-primary w-100">Book Now 🏨</a>
+                                <a href="booking.jsp?id=<%= r.getId() %>" class="btn btn-primary w-100">Book Now 🏨</a>
                             <% } else { %>
                                 <a href="login.jsp" class="btn btn-outline-primary w-100">Login to Book</a>
                             <% } %>
