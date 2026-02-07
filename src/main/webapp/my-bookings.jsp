@@ -30,6 +30,15 @@
 </nav>
 
 <div class="container">
+<%
+        String succMsg = (String) session.getAttribute("succMsg");
+        if(succMsg != null) {
+    %>
+        <div class="alert alert-success text-center" role="alert"><%= succMsg %></div>
+    <%
+        session.removeAttribute("succMsg");
+        }
+    %>
     <div class="card shadow">
         <div class="card-header bg-white">
             <h4 class="text-primary">My Booking History 📅</h4>

@@ -18,17 +18,11 @@ import com.oceanview.model.User;
 
 @WebServlet("/book-room")
 public class BookingServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-
+    
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
         try {
-            
-            int roomId = Integer.parseInt(request.getParameter("room_id"));
-            double pricePerNight = Double.parseDouble(request.getParameter("price"));
-            String checkInStr = request.getParameter("checkin");
-            String checkOutStr = request.getParameter("checkout");
-
-            
+            // 1. Check if user is logged in
             HttpSession session = request.getSession();
             User user = (User) session.getAttribute("userObj");
             
@@ -36,42 +30,54 @@ public class BookingServlet extends HttpServlet {
                 response.sendRedirect("login.jsp");
                 return;
             }
-
             
-            LocalDate inDate = LocalDate.parse(checkInStr);
-            LocalDate outDate = LocalDate.parse(checkOutStr);
-            long days = ChronoUnit.DAYS.between(inDate, outDate);
+            // 2. Get data from the form
+            int userId = user.getId();
+            int roomId = Integer.parseInt(request.getParameter("room_id"));
+            double pricePerNight = Double.parseDouble(request.getParameter("price"));
+            
+            String checkInStr = request.getParameter("checkin");
+            String checkOutStr = request.getParameter("checkout");
+            
+            Date checkIn = Date.valueOf(checkInStr);
+            Date checkOut = Date.valueOf(checkOutStr);
+            
+            // 3. Calculate Days and Total Bill (Requirement 4)
+            LocalDate d1 = LocalDate.parse(checkInStr);
+            LocalDate d2 = LocalDate.parse(checkOutStr);
+            
+            long days = ChronoUnit.DAYS.between(d1, d2);
             
             if(days <= 0) {
-                session.setAttribute("msg", "Invalid Date Selection!");
-                response.sendRedirect("index.jsp");
+                session.setAttribute("failedMsg", "Invalid Date Selection! Check-out must be after Check-in.");
+                response.sendRedirect("booking.jsp?id=" + roomId);
                 return;
             }
-
-            // 4. (Total Price)
+            
             double totalPrice = days * pricePerNight;
-
-            // 5. Booking Object 
+            
+            // 4. Set data to Booking Object
             Booking b = new Booking();
-            b.setUserId(user.getId());
+            b.setUserId(userId);
             b.setRoomId(roomId);
-            b.setCheckIn(Date.valueOf(inDate));
-            b.setCheckOut(Date.valueOf(outDate));
+            b.setCheckIn(checkIn);
+            b.setCheckOut(checkOut);
             b.setTotalPrice(totalPrice);
-            b.setStatus("Pending");
-
-            // 6. Database 
+            b.setStatus("Pending"); // Default status
+            
+            // 5. Save to Database using DAO
             BookingDAO dao = new BookingDAO();
             boolean f = dao.addBooking(b);
-
+            
             if(f) {
-                session.setAttribute("succMsg", "Booking Placed Successfully! Total: " + totalPrice);
-                response.sendRedirect("index.jsp"); // හෝ Success page එකකට
+                // Booking Success - Redirect to My Bookings with a success message
+                session.setAttribute("succMsg", "Booking Placed Successfully! Total Bill: LKR " + totalPrice);
+                response.sendRedirect("my-bookings.jsp");
             } else {
-                session.setAttribute("failedMsg", "Something went wrong on server");
-                response.sendRedirect("index.jsp");
+                session.setAttribute("failedMsg", "Something went wrong on server!");
+                response.sendRedirect("booking.jsp?id=" + roomId);
             }
-
+            
         } catch (Exception e) {
             e.printStackTrace();
         }
