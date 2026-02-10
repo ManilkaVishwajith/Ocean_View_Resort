@@ -2,7 +2,7 @@ package com.oceanview.model;
 
 import java.sql.Date; // Date වර්ගය සඳහා
 
-public class Booking {
+public class Reservation {
     private int id;
     private int userId;
     private int roomId;
@@ -11,7 +11,7 @@ public class Booking {
     private double totalPrice;
     private String status;
 
-    public Booking() {
+    public Reservation() {
         super();
     }
 
