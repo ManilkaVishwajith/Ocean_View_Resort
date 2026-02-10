@@ -3,6 +3,9 @@ package com.oceanview.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.oceanview.model.User;
 import com.oceanview.util.DBConnect;
 
@@ -64,5 +67,48 @@ public class UserDAO {
         }
         
         return isSuccess;
+    }
+ // 1. Admin සඳහා සියලුම Users ලා ලබා ගැනීම
+    public List<User> getAllUsers() {
+        List<User> list = new ArrayList<>();
+        User u = null;
+        try {
+            Connection con = DBConnect.getConnection();
+            String sql = "SELECT * FROM user ORDER BY id DESC"; // Table name එක හරියටම බලන්න
+            PreparedStatement ps = con.prepareStatement(sql);
+            
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()) {
+                u = new User();
+                u.setId(rs.getInt(1));
+                u.setUsername(rs.getString(2));
+                u.setEmail(rs.getString(3));
+                u.setPassword(rs.getString(4)); 
+                u.setRole(rs.getString(5));
+                list.add(u);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // 2. User කෙනෙක් ඉවත් කිරීම (Delete)
+    public boolean deleteUser(int id) {
+        boolean f = false;
+        try {
+            Connection con = DBConnect.getConnection();
+            String sql = "DELETE FROM user WHERE id=?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            
+            int i = ps.executeUpdate();
+            if(i > 0) {
+                f = true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return f;
     }
 }
