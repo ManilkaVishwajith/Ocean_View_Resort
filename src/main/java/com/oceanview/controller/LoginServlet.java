@@ -1,6 +1,7 @@
 package com.oceanview.controller;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -22,8 +23,8 @@ public class LoginServlet extends HttpServlet {
             String password = request.getParameter("password");
 
             UserDAO dao = new UserDAO();
-            User user = dao.login(username, password);
-
+         // login වෙනුවට checkLogin ලෙස වෙනස් කරන්න
+            User user = dao.checkLogin(username, password);
             HttpSession session = request.getSession();
 
             if (user != null) {
