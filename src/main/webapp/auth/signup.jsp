@@ -1,69 +1,216 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Sign Up - Ocean View Resort</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-    body {
-        background-color: #f0f2f5;
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .signup-card {
-        width: 100%;
-        max-width: 500px;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        background: white;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Ocean View Resort</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* 🔹 Background Image */
+        .bg-image {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            /* පින්තූරය හරියටම පෙන්වීමට Path එක වෙනස් කරන්න */
+            background: url('${pageContext.request.contextPath}/img/double.jpg') no-repeat center center;
+            background-size: cover;
+            z-index: -1;
+            filter: blur(5px);
+            transform: scale(1.02);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* අඳුරු පැහැය */
+            z-index: -1;
+        }
+
+        /* 🔹 Glass Card */
+        .signup-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            color: white;
+            animation: fadeIn 0.8s ease;
+        }
+
+        /* 🔹 Form Styles */
+        .form-label {
+            font-weight: 500;
+            color: #ffd700; /* Gold Color */
+            margin-bottom: 5px;
+        }
+
+        .input-group-text {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-right: none;
+            color: #ffd700;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-left: none;
+            color: white !important;
+            height: 45px;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.2) !important;
+            border-color: #ffd700;
+            box-shadow: none;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 🔹 Buttons */
+        .btn-signup {
+            background: linear-gradient(45deg, #d4af37, #c5a028);
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 30px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            color: white;
+        }
+
+        .link-text {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .link-text:hover {
+            color: #ffd700;
+            text-decoration: underline;
+        }
+
+        /* 🔹 Home Button */
+        .btn-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            transition: 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .btn-home:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffd700;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
 
-<div class="signup-card">
-    <h3 class="text-center mb-4 text-primary">Join Ocean View Resort 🌊</h3>
-    <h5 class="text-center mb-4">Create Account</h5>
+    <div class="bg-image"></div>
+    <div class="overlay"></div>
 
-    <% 
-        String error = (String) session.getAttribute("regError");
-        String success = (String) session.getAttribute("regSuccess");
-        
-        if(error != null) { %>
-            <div class="alert alert-danger"><%= error %></div>
-    <%  session.removeAttribute("regError"); } 
-        
-        if(success != null) { %>
-            <div class="alert alert-success"><%= success %></div>
-    <%  session.removeAttribute("regSuccess"); } %>
+    <a href="${pageContext.request.contextPath}/index.jsp" class="btn-home">
+        <i class="fas fa-arrow-left me-2"></i>Home
+    </a>
 
-    <form action="register" method="post">
-        <div class="mb-3">
-            <label class="form-label">Username</label>
-            <input type="text" name="username" class="form-control" required>
+    <div class="signup-card">
+        <div class="text-center mb-4">
+            <i class="fas fa-user-plus fa-3x text-warning mb-3"></i>
+            <h3 class="fw-bold">Join Ocean View 🌊</h3>
+            <p class="text-white-50">Create your account to start booking</p>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Email Address</label>
-            <input type="email" name="email" class="form-control" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" required>
-        </div>
-        
-        <input type="hidden" name="role" value="customer">
-        
-        <button type="submit" class="btn btn-success w-100">Sign Up</button>
-        
-        <div class="text-center mt-3">
-            <a href="login.jsp" class="text-decoration-none">Already have an account? Login</a>
-        </div>
-    </form>
-</div>
+
+        <% 
+            String error = (String) session.getAttribute("regError");
+            String success = (String) session.getAttribute("regSuccess");
+            
+            if(error != null) { %>
+                <div class="alert alert-danger bg-transparent text-danger border-danger text-center p-2">
+                    <i class="fas fa-exclamation-circle me-2"></i><%= error %>
+                </div>
+        <%  session.removeAttribute("regError"); } 
+            
+            if(success != null) { %>
+                <div class="alert alert-success bg-transparent text-success border-success text-center p-2">
+                    <i class="fas fa-check-circle me-2"></i><%= success %>
+                </div>
+        <%  session.removeAttribute("regSuccess"); } %>
+
+        <form action="${pageContext.request.contextPath}/register" method="post">
+            
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="Choose a username" required>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email Address</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="Create a password" required>
+                </div>
+            </div>
+            
+            <input type="hidden" name="role" value="customer">
+            
+            <button type="submit" class="btn btn-signup w-100">
+                Create Account <i class="fas fa-arrow-right ms-2"></i>
+            </button>
+            
+            <div class="text-center mt-4">
+                <p class="mb-0 text-white-50">Already have an account?</p>
+                <a href="login.jsp" class="link-text fw-bold">Login Here</a>
+            </div>
+        </form>
+    </div>
 
 </body>
 </html>

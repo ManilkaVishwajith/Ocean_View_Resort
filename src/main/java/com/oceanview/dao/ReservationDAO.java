@@ -12,22 +12,23 @@ import com.oceanview.util.DBConnect;
 public class ReservationDAO implements IReservationDAO {
 
     @Override
-    public boolean addReservation(Reservation r) { // addBooking නෙවෙයි addReservation
+    public boolean addReservation(Reservation r) {
         boolean f = false;
         try {
             Connection con = DBConnect.getConnection();
-            String sql = "INSERT INTO bookings(user_id, room_id, check_in, check_out, total_price, status) VALUES(?,?,?,?,?,?)";
-            
+            // Database Column Names හරියටම බලන්න (id එක auto-increment විය යුතුයි)
+            String sql = "INSERT INTO reservation(customer_name, room_type, check_in, check_out, price, email) VALUES(?,?,?,?,?,?)";
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, r.getUserId());
-            ps.setInt(2, r.getRoomId());
-            ps.setDate(3, r.getCheckIn());
-            ps.setDate(4, r.getCheckOut());
-            ps.setDouble(5, r.getTotalPrice());
-            ps.setString(6, r.getStatus());
-            
+
+            ps.setString(1, r.getCustomerName());
+            ps.setString(2, r.getRoomType());
+            ps.setString(3, r.getCheckIn());
+            ps.setString(4, r.getCheckOut());
+            ps.setString(5, r.getRoomPrice()); // Model එකේ getRoomPrice() තිබිය යුතුයි
+            ps.setString(6, r.getEmail());
+
             int i = ps.executeUpdate();
-            if(i > 0) {
+            if (i > 0) {
                 f = true;
             }
         } catch (Exception e) {
@@ -37,52 +38,50 @@ public class ReservationDAO implements IReservationDAO {
     }
 
     @Override
-    public List<Reservation> getReservationsByUserId(int userId) { // Name changed here
-        List<Reservation> list = new ArrayList<>();
+    public Reservation getReservationById(int id) {
         Reservation r = null;
         try {
             Connection con = DBConnect.getConnection();
-            String sql = "SELECT * FROM bookings WHERE user_id=? ORDER BY id DESC";
+            String sql = "SELECT * FROM reservation WHERE id=?";
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, userId);
-            
+            ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
-            while(rs.next()) {
+
+            if (rs.next()) {
                 r = new Reservation();
-                r.setId(rs.getInt(1));
-                r.setUserId(rs.getInt(2));
-                r.setRoomId(rs.getInt(3));
-                r.setCheckIn(rs.getDate(4));
-                r.setCheckOut(rs.getDate(5));
-                r.setTotalPrice(rs.getDouble(6));
-                r.setStatus(rs.getString(7));
-                list.add(r);
+                r.setId(rs.getInt("id"));
+                r.setCustomerName(rs.getString("customer_name"));
+                r.setRoomType(rs.getString("room_type"));
+                r.setCheckIn(rs.getString("check_in"));
+                r.setCheckOut(rs.getString("check_out"));
+                r.setRoomPrice(rs.getString("price")); // DB column: price, Model: roomPrice
+                r.setEmail(rs.getString("email"));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return list;
+        return r;
     }
 
     @Override
-    public List<Reservation> getAllReservations() { // Name changed here
+    public List<Reservation> getAllReservations() {
         List<Reservation> list = new ArrayList<>();
         Reservation r = null;
         try {
             Connection con = DBConnect.getConnection();
-            String sql = "SELECT * FROM bookings ORDER BY id DESC";
+            String sql = "SELECT * FROM reservation ORDER BY id DESC";
             PreparedStatement ps = con.prepareStatement(sql);
-            
             ResultSet rs = ps.executeQuery();
-            while(rs.next()) {
+
+            while (rs.next()) {
                 r = new Reservation();
-                r.setId(rs.getInt(1));
-                r.setUserId(rs.getInt(2));
-                r.setRoomId(rs.getInt(3));
-                r.setCheckIn(rs.getDate(4));
-                r.setCheckOut(rs.getDate(5));
-                r.setTotalPrice(rs.getDouble(6));
-                r.setStatus(rs.getString(7));
+                r.setId(rs.getInt("id"));
+                r.setCustomerName(rs.getString("customer_name"));
+                r.setRoomType(rs.getString("room_type"));
+                r.setCheckIn(rs.getString("check_in"));
+                r.setCheckOut(rs.getString("check_out"));
+                r.setRoomPrice(rs.getString("price"));
+                r.setEmail(rs.getString("email"));
                 list.add(r);
             }
         } catch (Exception e) {

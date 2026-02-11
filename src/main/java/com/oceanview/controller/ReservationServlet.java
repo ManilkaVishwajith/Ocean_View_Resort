@@ -1,10 +1,6 @@
 package com.oceanview.controller;
 
 import java.io.IOException;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -12,75 +8,53 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.oceanview.factory.ServiceFactory;
+import com.oceanview.dao.ReservationDAO;
 import com.oceanview.model.Reservation;
-import com.oceanview.model.User;
-import com.oceanview.service.ReservationService;
 
-// URL එකත් අපි වෙනස් කළා reservation කියලා
-@WebServlet("/reservation")
+@WebServlet("/reservation/add")
 public class ReservationServlet extends HttpServlet {
-    
+    private static final long serialVersionUID = 1L;
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
         try {
-            // 1. User Log වෙලාද බලනවා
-            HttpSession session = request.getSession();
-            User user = (User) session.getAttribute("userObj");
-            
-            if(user == null) {
-                response.sendRedirect("auth/login.jsp"); // ෆෝල්ඩර් මාරු කළ නිසා Path එක වෙනස් වුණා
-                return;
-            }
-            
-            // 2. Form එකෙන් දත්ත ගන්නවා
-            int userId = user.getId();
-            int roomId = Integer.parseInt(request.getParameter("room_id"));
-            double pricePerNight = Double.parseDouble(request.getParameter("price"));
-            
-            String checkInStr = request.getParameter("checkin");
-            String checkOutStr = request.getParameter("checkout");
-            
-            Date checkIn = Date.valueOf(checkInStr);
-            Date checkOut = Date.valueOf(checkOutStr);
-            
-            // 3. දින ගණන සහ මුළු මුදල ගණනය කිරීම
-            LocalDate d1 = LocalDate.parse(checkInStr);
-            LocalDate d2 = LocalDate.parse(checkOutStr);
-            
-            long days = ChronoUnit.DAYS.between(d1, d2);
-            
-            if(days <= 0) {
-                session.setAttribute("failedMsg", "Invalid Dates! Check-out must be after Check-in.");
-                response.sendRedirect("reservations/add.jsp?id=" + roomId);
-                return;
-            }
-            
-            double totalPrice = days * pricePerNight;
-            
-            // 4. Reservation Object එක හදනවා (Model)
+            // 1. Form Data ලබා ගැනීම
+            String customerName = request.getParameter("customerName");
+            String email = request.getParameter("email");
+            String roomType = request.getParameter("roomType");
+            String roomPrice = request.getParameter("roomPrice"); 
+            String checkIn = request.getParameter("checkIn");
+            String checkOut = request.getParameter("checkOut");
+
+            // 2. Reservation Object සැකසීම
+            // (දැන් Model එකේ Setters තියෙන නිසා රතු ඉරි එන්නේ නෑ)
             Reservation r = new Reservation();
-            r.setUserId(userId);
-            r.setRoomId(roomId);
+            r.setCustomerName(customerName);
+            r.setEmail(email);
+            r.setRoomType(roomType);
+            r.setRoomPrice(roomPrice);
             r.setCheckIn(checkIn);
             r.setCheckOut(checkOut);
-            r.setTotalPrice(totalPrice);
-            r.setStatus("Pending");
-            
-            // 5. Service Factory හරහා Service එක අරගෙන Data යවනවා (Professional Way) 🏭
-            ReservationService service = ServiceFactory.getReservationService();
-            boolean f = service.makeReservation(r);
-            
-            if(f) {
-                session.setAttribute("succMsg", "Reservation Placed Successfully! Bill: LKR " + totalPrice);
-                response.sendRedirect("reservations/viewAll.jsp");
+
+            // 3. Database එකට යැවීම
+            ReservationDAO dao = new ReservationDAO();
+            boolean isSuccess = dao.addReservation(r);
+
+            HttpSession session = request.getSession();
+
+            if(isSuccess) {
+                session.setAttribute("succMsg", "Booking Placed Successfully!");
+                // සාර්ථක නම් My Bookings පිටුවට
+                response.sendRedirect(request.getContextPath() + "/my-bookings.jsp");
             } else {
-                session.setAttribute("failedMsg", "Something went wrong on server!");
-                response.sendRedirect("reservations/add.jsp?id=" + roomId);
+                session.setAttribute("failedMsg", "Something went wrong! Please try again.");
+                // අසාර්ථක නම් Home Page එකට
+                response.sendRedirect(request.getContextPath() + "/index.jsp");
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
+            response.sendRedirect(request.getContextPath() + "/index.jsp");
         }
     }
 }

@@ -13,11 +13,18 @@ public class LogoutServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        
-        HttpSession session = request.getSession();
-        session.invalidate(); // 1. Session එක විනාශ කරනවා (Destroy)
-        
-        // 2. ආපහු Login Page එකට යවනවා
-        response.sendRedirect("login.jsp");
+        try {
+            HttpSession session = request.getSession();
+            session.removeAttribute("userObj");
+            session.removeAttribute("role");
+            session.invalidate(); // Session එක විනාශ කිරීම
+            
+            HttpSession newSession = request.getSession();
+            newSession.setAttribute("succMsg", "Logout Successfully");
+            response.sendRedirect("auth/login.jsp");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

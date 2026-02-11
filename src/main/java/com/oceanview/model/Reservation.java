@@ -1,39 +1,47 @@
 package com.oceanview.model;
 
-import java.sql.Date; // Date වර්ගය සඳහා
-
 public class Reservation {
     private int id;
-    private int userId;
-    private int roomId;
-    private Date checkIn;
-    private Date checkOut;
-    private double totalPrice;
-    private String status;
+    private String customerName;
+    private String email;
+    private String roomType;
+    private String roomPrice; // Price එක String ලෙස තබා ගමු
+    private String checkIn;
+    private String checkOut;
 
-    public Reservation() {
-        super();
+    // Default Constructor
+    public Reservation() {}
+
+    // Constructor with fields (Optional)
+    public Reservation(String customerName, String email, String roomType, String roomPrice, String checkIn, String checkOut) {
+        this.customerName = customerName;
+        this.email = email;
+        this.roomType = roomType;
+        this.roomPrice = roomPrice;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
     }
 
-    // Getters and Setters
+    // --- Getters and Setters (මේවා නැති නිසා තමයි Servlet එකේ Error ආවේ) ---
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
-    
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
-    
-    public int getRoomId() { return roomId; }
-    public void setRoomId(int roomId) { this.roomId = roomId; }
-    
-    public Date getCheckIn() { return checkIn; }
-    public void setCheckIn(Date checkIn) { this.checkIn = checkIn; }
-    
-    public Date getCheckOut() { return checkOut; }
-    public void setCheckOut(Date checkOut) { this.checkOut = checkOut; }
-    
-    public double getTotalPrice() { return totalPrice; }
-    public void setTotalPrice(double totalPrice) { this.totalPrice = totalPrice; }
-    
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+
+    public String getCustomerName() { return customerName; }
+    public void setCustomerName(String customerName) { this.customerName = customerName; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getRoomType() { return roomType; }
+    public void setRoomType(String roomType) { this.roomType = roomType; }
+
+    public String getRoomPrice() { return roomPrice; }
+    public void setRoomPrice(String roomPrice) { this.roomPrice = roomPrice; }
+
+    public String getCheckIn() { return checkIn; }
+    public void setCheckIn(String checkIn) { this.checkIn = checkIn; }
+
+    public String getCheckOut() { return checkOut; }
+    public void setCheckOut(String checkOut) { this.checkOut = checkOut; }
 }
