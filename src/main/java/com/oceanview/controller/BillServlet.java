@@ -11,60 +11,67 @@ import com.oceanview.dao.ReservationDAO;
 import com.oceanview.model.Reservation;
 import com.oceanview.service.BillingService;
 
+/**
+ * Servlet implementation class BillServlet
+ * URL Mapping: /billing/generate
+ */
 @WebServlet("/billing/generate")
 public class BillServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            // 1. ID එක ලබා ගැනීම
+            // 1. URL එකෙන් එවන Reservation ID එක ලබා ගැනීම
             String idParam = request.getParameter("id");
 
             if (idParam != null && !idParam.isEmpty()) {
                 int id = Integer.parseInt(idParam);
 
+                // 2. DAO එක හරහා දත්ත ලබා ගැනීම
                 ReservationDAO dao = new ReservationDAO();
                 Reservation r = dao.getReservationById(id);
 
                 if (r != null) {
-                    // 2. දින ගණන සහ මුළු මුදල ගණනය කිරීම
+                    // 3. Billing Logic ක්‍රියාත්මක කිරීම
                     BillingService service = new BillingService();
                     
-                    // දින ගණන (Dates String නිසා Service එක ඇතුලේ Parse කරන්න ඕනේ)
+                    // දින ගණන ගණනය කිරීම (Service එකේ calculateDays method එක අවශ්‍යයි)
                     long days = service.calculateDays(r.getCheckIn(), r.getCheckOut());
+                    
+                    // දින ගණන 0 වුණොත් අවම වශයෙන් 1 ලෙස ගනිමු
+                    if (days <= 0) days = 1;
 
-                    // කාමරයේ මිල Double වලට හැරවීම
+                    // මිල Double වලට හැරවීම (Error safe parsing)
                     double price = 0;
                     try {
                         price = Double.parseDouble(r.getRoomPrice());
-                    } catch (NumberFormatException e) {
-                        price = 0; // මිල වැරදි නම් 0 ලෙස ගනී
+                    } catch (Exception e) {
+                        price = 0.0;
                     }
 
                     // මුළු එකතුව (Total = Price * Days)
                     double total = service.calculateTotal(price, days);
 
-                    // 3. Invoice JSP එකට දත්ත යැවීම
+                    // 4. Invoice JSP එකට අවශ්‍ය attributes set කිරීම
                     request.setAttribute("reservation", r);
                     request.setAttribute("days", days);
                     request.setAttribute("total", total);
 
-                    // වැදගත්: සම්පූර්ණ Path එක දෙන්න (/billing/invoice.jsp)
+                    // 5. Invoice පිටුවට යොමු කිරීම
                     request.getRequestDispatcher("/billing/invoice.jsp").forward(request, response);
 
                 } else {
-                    // Reservation එක හොයාගන්න බැරි නම්
-                    response.sendRedirect(request.getContextPath() + "/my-bookings.jsp");
+                    // දත්ත නැත්නම් Redirect කිරීම
+                    response.sendRedirect(request.getContextPath() + "/reservations/my-bookings.jsp");
                 }
             } else {
-                // ID එකක් ඇවිත් නැත්නම්
-                response.sendRedirect(request.getContextPath() + "/my-bookings.jsp");
+                response.sendRedirect(request.getContextPath() + "/reservations/my-bookings.jsp");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            // Error එකක් ආවොත් Home Page එකට හෝ Error Page එකට යවන්න
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            // Error එකක් ආවොත් ප්‍රධාන පිටුවට යවන්න
+            response.sendRedirect(request.getContextPath() + "/home/index.jsp");
         }
     }
 }

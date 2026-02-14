@@ -1,7 +1,6 @@
 package com.oceanview.controller;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,28 +18,34 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
         try {
+            // JSP එකේ input fields වල 'name' එක මේවට සමාන විය යුතුයි
             String username = request.getParameter("username");
             String password = request.getParameter("password");
 
             UserDAO dao = new UserDAO();
-         // login වෙනුවට checkLogin ලෙස වෙනස් කරන්න
+            // UserDAO එකේ තියෙන Method එක 'checkLogin' නම් එය නිවැරදියි
             User user = dao.checkLogin(username, password);
+            
             HttpSession session = request.getSession();
 
             if (user != null) {
-                // User ව Session එකට දාගන්නවා (system එක පුරාම පාවිච්චි කරන්න)
+                // 'userObj' කියන නමම dashboard එකේ session එකටත් පාවිච්චි කරන්න
                 session.setAttribute("userObj", user);
-                session.setAttribute("role", user.getRole());
                 
-                // Admin නම් Dashboard එකට, නැත්නම් Home Page එකට
+                // Admin කෙනෙක් නම් Dashboard එකට යවනවා
                 if("admin".equals(user.getRole())) {
-                    response.sendRedirect("system/dashboard.jsp");
-                } else {
-                    response.sendRedirect("system/dashboard.jsp"); // Staff ලත් Dashboard යවමු
+                    // ඔයාගේ Dashboard එකේ නම 'admindashboard.jsp'
+                    // එය තියෙන්නේ 'system' folder එක ඇතුළේ
+                    response.sendRedirect(request.getContextPath() + "/system/admindashboard.jsp");
+                } 
+                else {
+                    // සාමාන්‍ය Customer කෙනෙක් නම් Home Page එකට යවනවා
+                    response.sendRedirect(request.getContextPath() + "/home/index.jsp");
                 }
             } else {
-                session.setAttribute("failedMsg", "Invalid Email or Password");
-                response.sendRedirect("auth/login.jsp");
+                // වැරදි නම් නැවත Login එකට යවනවා
+                session.setAttribute("failedMsg", "Invalid Username or Password");
+                response.sendRedirect(request.getContextPath() + "/auth/login.jsp");
             }
 
         } catch (Exception e) {

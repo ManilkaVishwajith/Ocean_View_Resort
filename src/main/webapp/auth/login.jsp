@@ -187,7 +187,9 @@
 
             <div class="text-center mt-4 bottom-links">
                 <p class="mb-2">Don't have an account? <a href="signup.jsp" class="fw-bold text-warning">Sign Up</a></p>
-                <a href="${pageContext.request.contextPath}/index.jsp"><i class="fas fa-arrow-left me-1"></i> Back to Home</a>
+                <a href="${pageContext.request.contextPath}/home/index.jsp">
+    <i class="fas fa-arrow-left me-1"></i> Back to Home
+</a>
             </div>
 
         </div>

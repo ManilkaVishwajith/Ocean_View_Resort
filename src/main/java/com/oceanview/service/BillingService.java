@@ -4,31 +4,19 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 public class BillingService {
-
-    // දින ගණන ගණනය කිරීම (String -> Date -> Difference)
+    // දින ගණන ගණනය කිරීම
     public long calculateDays(String checkIn, String checkOut) {
-        long days = 0;
         try {
-            // String දිනයන් LocalDate බවට පත් කිරීම (Format: yyyy-MM-dd)
-            LocalDate date1 = LocalDate.parse(checkIn);
-            LocalDate date2 = LocalDate.parse(checkOut);
-
-            // දින පරතරය ලබා ගැනීම
-            days = ChronoUnit.DAYS.between(date1, date2);
-
-            // දින ගණන 0 හෝ ඊට අඩු නම් (එකම දවසෙ check-out වුණොත්), අඩුම තරමේ දවස් 1ක් ලෙස සලකයි
-            if (days <= 0) {
-                days = 1;
-            }
-
+            LocalDate d1 = LocalDate.parse(checkIn);
+            LocalDate d2 = LocalDate.parse(checkOut);
+            long days = ChronoUnit.DAYS.between(d1, d2);
+            return (days <= 0) ? 1 : days; // අවම දින 1ක් ලෙස ගනී
         } catch (Exception e) {
-            e.printStackTrace();
-            return 1; // Error එකක් ආවොත් Default දවස් 1ක් ලෙස ගනී
+            return 1;
         }
-        return days;
     }
 
-    // මුළු මුදල ගණනය කිරීම
+    // මුළු මුදල ගණනය කිරීම (Price * Days)
     public double calculateTotal(double price, long days) {
         return price * days;
     }

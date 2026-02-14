@@ -11,26 +11,33 @@ import javax.servlet.http.HttpSession;
 import com.oceanview.dao.ReservationDAO;
 import com.oceanview.model.Reservation;
 
-@WebServlet("/reservation/add")
+@WebServlet("/ReservationServlet") // JSP එකේ Action එකට ගැලපෙන ලෙස වෙනස් කළා
 public class ReservationServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         
         try {
-            // 1. Form Data ලබා ගැනීම
+            // 1. add.jsp එකෙන් එවන Form Data ලබා ගැනීම
             String customerName = request.getParameter("customerName");
-            String email = request.getParameter("email");
+            String nic = request.getParameter("nic");
+            String contactNo = request.getParameter("contactNo");
             String roomType = request.getParameter("roomType");
-            String roomPrice = request.getParameter("roomPrice"); 
             String checkIn = request.getParameter("checkIn");
             String checkOut = request.getParameter("checkOut");
+            String noOfGuests = request.getParameter("noOfGuests");
 
-            // 2. Reservation Object සැකසීම
-            // (දැන් Model එකේ Setters තියෙන නිසා රතු ඉරි එන්නේ නෑ)
+            // Room Type එක අනුව මිල ස්වයංක්‍රීයව තීරණය කිරීම
+            String roomPrice = "0";
+            if ("Single".equals(roomType)) roomPrice = "5000";
+            else if ("Double".equals(roomType)) roomPrice = "8500";
+            else if ("Luxury Suite".equals(roomType)) roomPrice = "15000";
+
+            // 2. Reservation Object එකට දත්ත ඇතුළත් කිරීම
             Reservation r = new Reservation();
             r.setCustomerName(customerName);
-            r.setEmail(email);
+            // Model එකේ මේ අලුත් Fields (NIC, Contact) තියෙනවාදැයි බලන්න
+            r.setEmail(nic); // දැනට email field එක NIC එක තියාගන්න පාවිච්චි කරමු
             r.setRoomType(roomType);
             r.setRoomPrice(roomPrice);
             r.setCheckIn(checkIn);
@@ -44,17 +51,15 @@ public class ReservationServlet extends HttpServlet {
 
             if(isSuccess) {
                 session.setAttribute("succMsg", "Booking Placed Successfully!");
-                // සාර්ථක නම් My Bookings පිටුවට
-                response.sendRedirect(request.getContextPath() + "/my-bookings.jsp");
+                response.sendRedirect(request.getContextPath() + "/reservations/my-bookings.jsp");
             } else {
-                session.setAttribute("failedMsg", "Something went wrong! Please try again.");
-                // අසාර්ථක නම් Home Page එකට
-                response.sendRedirect(request.getContextPath() + "/index.jsp");
+                session.setAttribute("failedMsg", "Something went wrong!");
+                response.sendRedirect(request.getContextPath() + "/reservations/add.jsp");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            response.sendRedirect(request.getContextPath() + "/home/index.jsp");
         }
     }
 }

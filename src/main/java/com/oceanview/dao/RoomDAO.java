@@ -11,7 +11,7 @@ import com.oceanview.util.DBConnect;
 
 public class RoomDAO {
 
-    
+    // 1. සියලුම කාමර ලබා ගැනීම (Get All Rooms)
     public List<Room> getAllRooms() {
         List<Room> list = new ArrayList<>();
         Room r = null;
@@ -25,12 +25,13 @@ public class RoomDAO {
 
             while (rs.next()) {
                 r = new Room();
-                r.setId(rs.getInt(1));
-                r.setRoomNumber(rs.getString(2));
-                r.setRoomType(rs.getString(3));
-                r.setPrice(rs.getDouble(4));
-                r.setStatus(rs.getString(5));
-                r.setImageUrl(rs.getString(6));
+                // Column Names භාවිතා කිරීම (වඩාත් ආරක්ෂිතයි)
+                r.setId(rs.getInt("id"));
+                r.setRoomNumber(rs.getString("room_number"));
+                r.setRoomType(rs.getString("room_type"));
+                r.setPrice(rs.getDouble("price"));
+                r.setStatus(rs.getString("status"));
+                r.setImageUrl(rs.getString("image_url"));
 
                 list.add(r);
             }
@@ -42,7 +43,7 @@ public class RoomDAO {
         return list;
     } 
 
-   
+    // 2. ID එක අනුව කාමරයක් ලබා ගැනීම (Get Room By ID)
     public Room getRoomById(int id) {
         Room r = null;
         try {
@@ -54,12 +55,13 @@ public class RoomDAO {
 
             if (rs.next()) {
                 r = new Room();
-                r.setId(rs.getInt(1));
-                r.setRoomNumber(rs.getString(2));
-                r.setRoomType(rs.getString(3));
-                r.setPrice(rs.getDouble(4));
-                r.setStatus(rs.getString(5));
-                r.setImageUrl(rs.getString(6));
+                // මෙතැනත් Column Names භාවිතා කරන්න
+                r.setId(rs.getInt("id"));
+                r.setRoomNumber(rs.getString("room_number"));
+                r.setRoomType(rs.getString("room_type"));
+                r.setPrice(rs.getDouble("price"));
+                r.setStatus(rs.getString("status"));
+                r.setImageUrl(rs.getString("image_url"));
             }
         } catch (Exception e) {
             e.printStackTrace();

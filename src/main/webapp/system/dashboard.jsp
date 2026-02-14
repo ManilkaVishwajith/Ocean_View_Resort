@@ -138,7 +138,7 @@
                     <li class="nav-item"><a class="nav-link active" href="#"><i class="fas fa-tachometer-alt me-1"></i> Dashboard</a></li>
                     <li class="nav-item"><a class="nav-link" href="../reservations/viewAll.jsp"><i class="fas fa-calendar-alt me-1"></i> Reservations</a></li>
                     
-                    <li class="nav-item"><a class="nav-link" href="../reservations/viewAll.jsp"><i class="fas fa-file-invoice-dollar me-1"></i> Billing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../billing/invoice.jsp"><i class="fas fa-file-invoice-dollar me-1"></i> Billing</a></li>
                     
                     <li class="nav-item"><a class="nav-link" href="../admin/manageUsers.jsp"><i class="fas fa-users-cog me-1"></i> Manage Users</a></li>
                     <li class="nav-item"><a class="nav-link" href="../system/help.jsp"><i class="fas fa-question-circle me-1"></i> Help</a></li>

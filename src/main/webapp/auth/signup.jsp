@@ -146,9 +146,9 @@
     <div class="bg-image"></div>
     <div class="overlay"></div>
 
-    <a href="${pageContext.request.contextPath}/index.jsp" class="btn-home">
-        <i class="fas fa-arrow-left me-2"></i>Home
-    </a>
+    <a href="${pageContext.request.contextPath}/home/index.jsp" class="btn-home">
+    <i class="fas fa-arrow-left me-2"></i>Home
+</a>
 
     <div class="signup-card">
         <div class="text-center mb-4">
